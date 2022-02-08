@@ -2,3 +2,5 @@
 https://compliment-bot-capstone-2022.cognitiveservices.azure.com/
 IoZnWyP5ajkwDIPt2cGYJA
 Q3WndmMKsTY_slB6OWkeuofKrtlHig
+ComplimentBotDev
+Capstone2022

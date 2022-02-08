@@ -25,14 +25,16 @@ AZURE_API_KEY = keyLines[0].rstrip()
 AZURE_API_ENDPOINT = keyLines[1].rstrip()
 REDDIT_CLIENT_ID = keyLines[2].rstrip()
 REDDIT_SECRET_TOKEN = keyLines[3].rstrip()
+REDDIT_UN = keyLines[4].rstrip()
+REDDIT_PW = keyLines[5].rstrip()
 
 # note that CLIENT_ID refers to 'personal use script' and SECRET_TOKEN to 'token'
 auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_SECRET_TOKEN)
 
 # here we pass our login method (password), username, and password
 data = {'grant_type': 'password',
-        'username': 'ComplimentBotDev',
-        'password': 'Capstone2022'}
+        'username': REDDIT_UN,
+        'password': REDDIT_PW}
 
 # setup our header info, which gives reddit a brief description of our app
 headers = {'User-Agent': 'ComplimentBot/0.0.1'}
@@ -61,12 +63,24 @@ for post in allposts.json()['data']['children']:
      else:
          if 'jpg' in link:
              image = link
+             post_id = post['data']['id']
+             sub = post['data']['subreddit']
+             comment_URL = "https://oauth.reddit.com/r/" + sub + "/comments/" + post_id + "/irrelevant_string.json"
+             comments = requests.get(comment_URL, headers=headers)
+             #print(comments.json()[1]['data'])
+             #print(comments.json()[0])
+             for comment in comments.json()[1]['data']['children']:
+                #print(comment['data']['ups'])
+                if comment['data']['ups'] > 5:
+                    print(comment['data']['body'])
              break
          else:
              continue
 
 print(image)
 
+
+"""
 computerVision = ComputerVisionClient(AZURE_API_ENDPOINT, CognitiveServicesCredentials(AZURE_API_KEY))
 
 response = computerVision.describe_image(url=image, raw=True)
@@ -78,3 +92,4 @@ for caption in response.output.captions:
 detect = computerVision.detect_objects(image)
 for obj in detect.objects:
     print(obj.object_property, obj.rectangle)
+"""
