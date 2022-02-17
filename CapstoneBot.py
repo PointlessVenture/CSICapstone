@@ -1,5 +1,5 @@
 """
-Compliment Bot v 0.0.1
+Compliment Bot v 0.0.2
 Aiden Tracy and Collin Westgate
 Capstone 2022
 """
@@ -15,7 +15,7 @@ from azure.cognitiveservices.vision.computervision.models import OperationStatus
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
 import time
-
+import re
 import requests
 
 keyFile = open('H:\Capstone\CSICapstone\keys.txt', 'r')
@@ -54,6 +54,7 @@ print(headers)
 
 allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/hot', headers=headers)
 image = ''
+file = open("testtext.txt","w")
 for post in allposts.json()['data']['children']:
      #Output all Keys to see available data.
      #print(post['data'].keys())
@@ -61,7 +62,7 @@ for post in allposts.json()['data']['children']:
      if 'com' in link:
          continue
      else:
-         if 'jpg' in link:
+          if 'jpg' in link:
              image = link
              post_id = post['data']['id']
              sub = post['data']['subreddit']
@@ -69,27 +70,39 @@ for post in allposts.json()['data']['children']:
              comments = requests.get(comment_URL, headers=headers)
              #print(comments.json()[1]['data'])
              #print(comments.json()[0])
+             print(image)
+             file.write(image)
+             file.write("\n")
              for comment in comments.json()[1]['data']['children']:
                 #print(comment['data']['ups'])
-                if comment['data']['ups'] > 5:
+                if comment['data']['ups'] >= 2:
                     print(comment['data']['body'])
-             break
-         else:
-             continue
+                    file.write(comment['data']['body'])
+                    file.write("\n")
+             file.write("\n")
+          else:
+              continue
 
+#image = "https://i.redd.it/vilrqew7rq481.jpg"
+"""
 print(image)
-
-
-"""
 computerVision = ComputerVisionClient(AZURE_API_ENDPOINT, CognitiveServicesCredentials(AZURE_API_KEY))
-
+output = ""
 response = computerVision.describe_image(url=image, raw=True)
-print(dir(response))
-print(response.output)
-print(response.output.tags)
+#print(dir(response))
+#print(response.output)
+#print(response.output.tags)
+for tag in response.output.tags:
+    output += tag
+    output += ", "
 for caption in response.output.captions:
-    print(caption.text, caption.confidence)
+    #print(caption.text, caption.confidence)
+    output += caption.text
 detect = computerVision.detect_objects(image)
-for obj in detect.objects:
-    print(obj.object_property, obj.rectangle)
+#for obj in detect.objects:
+   # print(obj.object_property, obj.rectangle)
+print(output)
+
+file.write(output)
 """
+file.close()
