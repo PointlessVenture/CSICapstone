@@ -2,4 +2,5 @@ C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums
 
 C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput
 
-python3 data\create_tfrecords.py --mode documents --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums --name output --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput --use_gpt2_tokenizer --minimum_size 1
+python data/create_tfrecords.py --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheDatu
+ms --name output --files_per 1000 --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheOutput --write_dataset_config --processes 1
