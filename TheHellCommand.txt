@@ -2,4 +2,4 @@ C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums
 
 C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput
 
-python3 create_tfrecords.py --mode documents --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums --name output --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput --use_gpt2_tokenizer --minimum_size 1
+python3 data\create_tfrecords.py --mode documents --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums --name output --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput --use_gpt2_tokenizer --minimum_size 1
