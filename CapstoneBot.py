@@ -8,6 +8,7 @@ Capstone 2022
 # Sources: https://towardsdatascience.com/how-to-use-the-reddit-api-in-python-5e05ddfd1e5c
 # https://docs.microsoft.com/en-us/azure/cognitive-services/Computer-vision/quickstarts-sdk/client-library?pivots=programming-language-python&tabs=visual-studio
 # https://www.youtube.com/watch?v=k8z-RbIBh68&ab_channel=JonWood
+# https://www.reddit.com/r/redditdev/comments/2uymft/help_please_re_after_and_before_in_api/
 
 
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
@@ -18,7 +19,7 @@ import time
 import re
 import requests
 
-keyFile = open('H:\Capstone\CSICapstone\keys.txt', 'r')
+keyFile = open('keys.txt', 'r')
 keyLines = keyFile.readlines()
 
 AZURE_API_KEY = keyLines[0].rstrip()
@@ -52,7 +53,7 @@ headers['Authorization'] = f'bearer {TOKEN}'
 # while the token is valid (~2 hours) we just add headers=headers to our requests
 print(headers)
 
-allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/hot', headers=headers)
+allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all', headers=headers)
 image = ''
 file = open("testtext.txt","w")
 for post in allposts.json()['data']['children']:
@@ -66,19 +67,23 @@ for post in allposts.json()['data']['children']:
              image = link
              post_id = post['data']['id']
              sub = post['data']['subreddit']
-             comment_URL = "https://oauth.reddit.com/r/" + sub + "/comments/" + post_id + "/irrelevant_string.json"
+             comment_URL = "https://oauth.reddit.com/r/" + sub + "/comments/" + post_id + ".json"
              comments = requests.get(comment_URL, headers=headers)
              #print(comments.json()[1]['data'])
              #print(comments.json()[0])
-             print(image)
+             #print(image)
              file.write(image)
              file.write("\n")
              for comment in comments.json()[1]['data']['children']:
                 #print(comment['data']['ups'])
-                if comment['data']['ups'] >= 2:
-                    print(comment['data']['body'])
-                    file.write(comment['data']['body'])
-                    file.write("\n")
+                try:
+                    if comment['data']['ups'] >= 10:
+                        #print(comment['data']['body'])
+                        #print((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
+                        file.write((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
+                        file.write("\n")
+                except KeyError:
+                    pass
              file.write("\n")
           else:
               continue
@@ -102,7 +107,6 @@ detect = computerVision.detect_objects(image)
 #for obj in detect.objects:
    # print(obj.object_property, obj.rectangle)
 print(output)
-
 file.write(output)
 """
 file.close()
