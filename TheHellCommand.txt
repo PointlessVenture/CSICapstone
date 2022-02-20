@@ -4,3 +4,7 @@ C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput
 
 python data/create_tfrecords.py --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheDatu
 ms --name output --files_per 1000 --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheOutput --write_dataset_config --processes 1
+
+
+python main.py --model gpt2_small --steps_per_checkpoint 500 --gpu_ids device:GPU:0
+
