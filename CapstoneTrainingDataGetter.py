@@ -52,11 +52,23 @@ headers['Authorization'] = f'bearer {TOKEN}'
 # while the token is valid (~2 hours) we just add headers=headers to our requests
 print(headers)
 
-allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all', headers=headers)
-image = ''
+afterstring = '?after='
+allposts = ""
+
+#To pull more data past first 2000: use lastID.txt file. Set variables accordingly.
+lastID = ""
 i = 0
+
+if lastID != "":
+    allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all' + afterstring + lastID, headers=headers)
+else:
+    allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all', headers=headers)
+
+image = ''
+j = i + 2000
+next = ""
 upvoteThreshold = 2
-while i < 2000:
+while i < j:
     #print("Looking at a request!")
     next = allposts.json()['data']['after']
 
@@ -103,3 +115,7 @@ while i < 2000:
     nextUrl = 'https://oauth.reddit.com/r/FreeCompliments/top/?t=all' + '?after=' + next
     allposts = requests.get(nextUrl, headers=headers)
 
+file = open("LastID.txt","w")
+file.write(next)
+file.write("\n" + str(i))
+file.close()
