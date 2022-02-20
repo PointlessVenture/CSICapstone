@@ -2,6 +2,10 @@ C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheDatums
 
 C:\Users\collin.westgate\PycharmProjects\gpt-neo\TheOutput
 
+git clone https://github.com/EleutherAI/gpt-neo.git
+
+https://developer.nvidia.com/cuda-11.2.0-download-archive?target_os=Windows&target_arch=x86_64&target_version=10&target_type=exelocal
+
 python data/create_tfrecords.py --input_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheDatu
 ms --name output --files_per 1000 --output_dir C:\Users\collin.westgate\PycharmProjects\gpt-neo-model\TheOutput --write_dataset_config --processes 1
 
