@@ -1,0 +1,7 @@
+{
+    "n_vocab": 50257,
+    "path": "C:\\Users\\collin.westgate\\PycharmProjects\\gpt-neo-model\\TheOutput\\output_0_6.tfrecords",
+    "eval_path": "",
+    "tokenizer_is_pretrained": true,
+    "tokenizer_path": "gpt2"
+}
