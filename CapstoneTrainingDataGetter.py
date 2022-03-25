@@ -10,15 +10,15 @@ Capstone 2022
 # https://www.youtube.com/watch?v=k8z-RbIBh68&ab_channel=JonWood
 
 
-from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
-from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
-from msrest.authentication import CognitiveServicesCredentials
+#from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+#from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+#from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+#from msrest.authentication import CognitiveServicesCredentials
 import time
 import re
 import requests
 
-keyFile = open('H:\Capstone\CSICapstone\keys.txt', 'r')
+keyFile = open("keys.txt", "r")
 keyLines = keyFile.readlines()
 
 AZURE_API_KEY = keyLines[0].rstrip()
@@ -65,12 +65,16 @@ else:
     allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all', headers=headers)
 
 image = ''
-j = i + 2000
+j = i + 250000
 next = ""
 upvoteThreshold = 2
 while i < j:
     #print("Looking at a request!")
     next = allposts.json()['data']['after']
+    file = open("LastID.txt", "w")
+    file.write(next)
+    file.write("\n" + str(i))
+    file.close()
 
     for post in allposts.json()['data']['children']:
          #print("Looking at Posts!")
@@ -80,7 +84,6 @@ while i < j:
          if 'com' in link:
              continue
          else:
-              if 'jpg' in link:
                  #print("Found an Image!")
                  image = link
                  #print(image)
@@ -93,25 +96,26 @@ while i < j:
                  #print(image)
                  #file.write(image)
                  #file.write("\n")
-                 for comment in comments.json()[1]['data']['children']:
-                    #print(comment['data']['ups'])
-                    try:
-                        if comment['data']['ups'] >= upvoteThreshold:
-                            #print("Found Comment #" + str(i))
-                            if not (str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " ").__contains__("[deleted]"):
-                                i = i + 1
-                                #print(comment['data']['body'])
-                                #print((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
-                                filename = "Compliments/compliment" + str(i) + ".txt"
-                                file = open(filename,"w")
-                                file.write((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
-                                file.write("\n")
-                                file.close()
-                    except KeyError:
-                        pass
+                 try:
+                     for comment in comments.json()[1]['data']['children']:
+                        #print(comment['data']['ups'])
+                        try:
+                            if comment['data']['ups'] >= upvoteThreshold:
+                                #print("Found Comment #" + str(i))
+                                if not (str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " ").__contains__("[]"):
+                                    i = i + 1
+                                    #print(comment['data']['body'])
+                                    #print((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
+                                    filename = "Compliments/compliment" + str(i) + ".txt"
+                                    file = open(filename,"w")
+                                    file.write((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
+                                    file.write("\n")
+                                    file.close()
+                        except KeyError:
+                            pass
+                 except KeyError:
+                    pass
                  #file.write("\n")
-              else:
-                  continue
     nextUrl = 'https://oauth.reddit.com/r/FreeCompliments/top/?t=all' + '?after=' + next
     allposts = requests.get(nextUrl, headers=headers)
 
