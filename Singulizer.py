@@ -10,5 +10,6 @@ for i in range(1,totalFiles):
     readfile = open(file, "r")
     text = readfile.read()
     readfile.close()
+    text = text.replace("\\n", "\n")
     text += "\n"
     writefile.write(text)
