@@ -1,0 +1,7 @@
+{
+    "n_vocab": 50257,
+    "path": "/content/GPTNeo/TheOutput/*.tfrecords",
+    "eval_path": "",
+    "tokenizer_is_pretrained": true,
+    "tokenizer_path": "gpt2"
+}
