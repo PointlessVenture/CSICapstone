@@ -37,7 +37,7 @@ data = {'grant_type': 'password',
         'password': REDDIT_PW}
 
 # setup our header info, which gives reddit a brief description of our app
-headers = {'User-Agent': 'ComplimentBot/0.0.1'}
+headers = {'User-Agent': 'ComplimentBot/0.0.2'}
 
 # send our request for an OAuth token
 res = requests.post('https://www.reddit.com/api/v1/access_token',
@@ -52,7 +52,10 @@ headers['Authorization'] = f'bearer {TOKEN}'
 # while the token is valid (~2 hours) we just add headers=headers to our requests
 print(headers)
 
-afterstring = '?after='
+# BLACKLISTED WORDS.
+blacklist = ["remove", "delete", "leave", "shit", "ass", "nig"]
+
+afterstring = '&after='
 allposts = ""
 
 #To pull more data past first 2000: use lastID.txt file. Set variables accordingly.
@@ -65,17 +68,22 @@ else:
     allposts = requests.get('https://oauth.reddit.com/r/FreeCompliments/top/?t=all', headers=headers)
 
 image = ''
-j = i + 250000
+j = 500000
 next = ""
+prev = ""
+testtext = ""
+prevStr = ""
 upvoteThreshold = 2
 while i < j:
     #print("Looking at a request!")
+    print(str(i))
     next = allposts.json()['data']['after']
+    test = allposts.json()['data']['before']
+    print(next,test)
     file = open("LastID.txt", "w")
     file.write(next)
     file.write("\n" + str(i))
     file.close()
-
     for post in allposts.json()['data']['children']:
          #print("Looking at Posts!")
          #Output all Keys to see available data.
@@ -102,13 +110,15 @@ while i < j:
                         try:
                             if comment['data']['ups'] >= upvoteThreshold:
                                 #print("Found Comment #" + str(i))
-                                if not (str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " ").__contains__("[]"):
+                                testtext = (str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\\n", "\ ")
+                                res = any(ele in testtext for ele in blacklist)
+                                if not res:
                                     i = i + 1
                                     #print(comment['data']['body'])
                                     #print((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
                                     filename = "Compliments/compliment" + str(i) + ".txt"
                                     file = open(filename,"w")
-                                    file.write((str(comment['data']['body'].encode('ascii', 'ignore'))[2:-1]).replace("\n", " "))
+                                    file.write(testtext)
                                     file.write("\n")
                                     file.close()
                         except KeyError:
@@ -116,8 +126,9 @@ while i < j:
                  except KeyError:
                     pass
                  #file.write("\n")
-    nextUrl = 'https://oauth.reddit.com/r/FreeCompliments/top/?t=all' + '?after=' + next
+    nextUrl = 'https://oauth.reddit.com/r/FreeCompliments/top/?t=all' + '&after=' + next
     allposts = requests.get(nextUrl, headers=headers)
+
 
 file = open("LastID.txt","w")
 file.write(next)
