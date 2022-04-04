@@ -1,0 +1,7 @@
+#Replace each line in this file with the appropriate key, then delete this line. Rename to "keys.txt"
+Microsoft Azure API Key
+Microsoft Azure API Endpoint
+Reddit Client ID
+Reddit Secret Token
+Reddit Username
+Reddit Password
