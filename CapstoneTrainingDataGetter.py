@@ -9,13 +9,6 @@ Capstone 2022
 # https://docs.microsoft.com/en-us/azure/cognitive-services/Computer-vision/quickstarts-sdk/client-library?pivots=programming-language-python&tabs=visual-studio
 # https://www.youtube.com/watch?v=k8z-RbIBh68&ab_channel=JonWood
 
-
-#from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-#from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
-#from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
-#from msrest.authentication import CognitiveServicesCredentials
-import time
-import re
 import requests
 
 keyFile = open("keys.txt", "r")
@@ -53,7 +46,8 @@ headers['Authorization'] = f'bearer {TOKEN}'
 print(headers)
 
 # BLACKLISTED WORDS.
-blacklist = ["remove", "delete", "leave", "shit", "ass", "nig"]
+blackfile = open("blacklist.txt", "r")
+blacklist = blackfile.readlines()
 
 afterstring = '&after='
 allposts = ""
