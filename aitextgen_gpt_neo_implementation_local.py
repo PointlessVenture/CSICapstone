@@ -10,6 +10,9 @@ Original file is located at
 # Starter imports/setup
 
 # !pip install -q aitextgen
+import language_tool_python
+import text2emotion
+import nltk
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
@@ -17,7 +20,6 @@ from msrest.authentication import CognitiveServicesCredentials
 import time
 import re
 import requests
-
 import logging
 logging.basicConfig(
         format="%(asctime)s — %(levelname)s — %(name)s — %(message)s",
@@ -25,57 +27,7 @@ logging.basicConfig(
         level=logging.INFO
     )
 
-from aitextgen import aitextgen
-#from aitextgen.colab import mount_gdrive, copy_file_from_gdrive
-
-# GPU Verification
-
-# !nvidia-smi
-"""
-# ai = aitextgen(tf_gpt2="124M", to_gpu=True)
-def run_setup():
-    # Comment out the above line and uncomment the below line to use GPT Neo instead.
-    ai = aitextgen(model="EleutherAI/gpt-neo-125M", to_gpu=True)
-
-    mount_gdrive()
-
-    file_name = "FullDataset.txt"
-
-    # If caching is used, (UNUSED FOR THIS IMPLEMENTATION, FOR NOW!)
-    #copy_file_from_gdrive(file_name)
-
-    # Run the fine-tune
-
-    ai.train(file_name,
-             line_by_line=False,
-             from_cache=False,
-             num_steps=3000,
-             generate_every=1000,
-             save_every=1000,
-             save_gdrive=True,
-             learning_rate=1e-3,
-             fp16=False,
-             batch_size=1, 
-             )
-
-    # Load the trained model if one already exists
-
-    from_folder = "/content/drive/MyDrive/Capstone Project/GOODONEATG_20220327_013515"
-
-    for file in ["pytorch_model.bin", "config.json"]:
-      if from_folder:
-        copy_file_from_gdrive(file, from_folder)
-      else:
-        copy_file_from_gdrive(file)
-
-
-    # Reload the model if just trained, makes it easier to use.
-
-    # ai = aitextgen(model_folder="trained_model", to_gpu=True)
-
-# ai.generate()
-"""
-def generation():
+def compVision():
     keyFile = open('keys.txt', 'r')
     keyLines = keyFile.readlines()
 
@@ -137,14 +89,51 @@ def generation():
     detect = computerVision.detect_objects(image)
     #for obj in detect.objects:
        # print(obj.object_property, obj.rectangle)
-    print(output)
+    return output
 
-    # load the retrained model + metadata necessary to generate text.
-    ai = aitextgen(model_folder="GOODONEATG", to_gpu=False)
+def generation(ai, output):
 
-    ai.generate(n=5,
+    text = ai.generate_one(
             batch_size=5,
             prompt=("Generate a compliment for " + output + ": \n"),
             max_length=45,
-            temperature=0.75,
+            temperature=0.7,
             top_p=0.9)
+
+    return text
+
+
+def checkGrammar(allCompliments):
+    tool = language_tool_python.LanguageTool('en-US')
+    lenList = []
+    bestCompliments = []
+
+    # Grab the list of the lengths of all compliments in order
+    for comp in allCompliments:
+        matches = tool.check(comp)
+        lenList.append(len(matches))
+
+    # Grab the three most grammatically correct compliments
+    for x in range(3):
+        bestScore = 100
+        bestIndex = -1
+        # Get the index of compliment with least errors
+        for y in range(len(lenList)):
+            if lenList[y] < bestScore:
+                bestScore = lenList[y]
+                bestIndex = y
+
+        bestCompliments.append(allCompliments[bestIndex])
+        # So this never gets selected again
+        lenList[bestIndex] = 101
+
+    mostHappy = -1
+    bestCompliment = ""
+    for i in bestCompliments:
+        emotionScores = text2emotion.get_emotion(i)
+        if emotionScores['Happy'] > mostHappy:
+            mostHappy = emotionScores['Happy']
+            bestCompliment = i
+
+    return bestCompliment
+
