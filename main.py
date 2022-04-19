@@ -31,8 +31,34 @@ if __name__ == '__main__':
             text = text.replace("\\", "")
             text = text.replace("\n", " ")
             text = text.replace("  ", " ")
-            compList = re.split("\.|!|\?", text)
+            newText = text.replace("!", ".")
+            newText = newText.replace("?", ".")
 
+            #Start New Text Formatter.
+            compList = newText.split(".")
+            subList = []
+            final = ""
+            for i in compList:
+                if i != compList[-1]:
+                    i += "."
+                    subList.append(i)
+
+            final = "".join(subList)
+            indexlist = []
+            for index in range(len(text)):
+                if text[index] == "!" or text[index] == "." or text[index] == "?":
+                    indexlist.append(index)
+            i = 0
+            for index in range(len(final)):
+                if final[index] == ".":
+                    final = final[:index] + text[indexlist[i]] + final[index + 1:]
+                    i = i + 1
+
+            firstComp = final
+
+            """
+            compList = re.split("\.|!|\?", text)
+ 
             # Grabs punctuation
             firstComp = compList[0]
             try:
@@ -40,10 +66,12 @@ if __name__ == '__main__':
                 firstComp = firstComp[1:]
             except IndexError:
                 pass
+            """
+
             allCompliments.append(firstComp)
 
+    #print(allCompliments)
     print("Successfully generated compliments, checking grammar...")
     bestCompliment = checkGrammar(allCompliments)
     print(bestCompliment)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
