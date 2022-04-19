@@ -1,4 +1,5 @@
 # CSICapstone  
+Aiden Tracy and Collin Westgate
 
 ## Compliment Bot
 The purpose of this capstone project is to create a bot capable of producing tailored compliments to images pulled from the r/FreeCompliments subreddit.
