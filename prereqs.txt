@@ -1,0 +1,11 @@
+#pip install -r prereqs.txt
+re
+nltk
+language_tool_python
+aitextgen
+text2emotion
+azure.cognitiveservices.vision.computervision
+time
+re
+requests
+logging
