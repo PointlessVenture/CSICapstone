@@ -10,6 +10,7 @@ import nltk
 import language_tool_python
 from aitextgen import aitextgen
 from aitextgen_gpt_neo_implementation_local import generation, compVision, checkGrammar
+useMultiset = True
 
 if __name__ == '__main__':
     nltk.download('omw-1.4')
@@ -31,42 +32,44 @@ if __name__ == '__main__':
             text = text.replace("\\", "")
             text = text.replace("\n", " ")
             text = text.replace("  ", " ")
-            newText = text.replace("!", ".")
-            newText = newText.replace("?", ".")
 
-            #Start New Text Formatter.
-            compList = newText.split(".")
-            subList = []
-            final = ""
-            for i in compList:
-                if i != compList[-1]:
-                    i += "."
-                    subList.append(i)
+            #Start New Text Formatter. Multi-Sentence
+            if(useMultiset):
+                newText = text.replace("!", ".")
+                newText = newText.replace("?", ".")
 
-            final = "".join(subList)
-            indexlist = []
-            for index in range(len(text)):
-                if text[index] == "!" or text[index] == "." or text[index] == "?":
-                    indexlist.append(index)
-            i = 0
-            for index in range(len(final)):
-                if final[index] == ".":
-                    final = final[:index] + text[indexlist[i]] + final[index + 1:]
-                    i = i + 1
 
-            firstComp = final
+                compList = newText.split(".")
+                subList = []
+                final = ""
+                for i in compList:
+                    if i != compList[-1]:
+                        i += "."
+                        subList.append(i)
 
-            """
-            compList = re.split("\.|!|\?", text)
- 
-            # Grabs punctuation
-            firstComp = compList[0]
-            try:
-                firstComp += text[len(compList[0])]
-                firstComp = firstComp[1:]
-            except IndexError:
-                pass
-            """
+                final = "".join(subList)
+                indexlist = []
+                for index in range(len(text)):
+                    if text[index] == "!" or text[index] == "." or text[index] == "?":
+                        indexlist.append(index)
+                i = 0
+                for index in range(len(final)):
+                    if final[index] == ".":
+                        final = final[:index] + text[indexlist[i]] + final[index + 1:]
+                        i = i + 1
+
+                firstComp = final
+
+            else:
+                compList = re.split("\.|!|\?", text)
+
+                # Grabs punctuation
+                firstComp = compList[0]
+                try:
+                    firstComp += text[len(compList[0])]
+                    firstComp = firstComp[1:]
+                except IndexError:
+                    pass
 
             allCompliments.append(firstComp)
 
